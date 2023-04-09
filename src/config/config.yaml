@@ -11,8 +11,7 @@ train:
   batch_size: 15
   epochs: 1
   grad_acc_steps: 4
-logging:
-  steps: 40
+  log_steps: 40
 eval:
   batch_size: 20
 model:
