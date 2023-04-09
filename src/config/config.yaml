@@ -1,0 +1,16 @@
+optim:
+  lr: 1.0e-3
+  weight_decay: 0.05
+  warmup_steps: 1000
+  total_steps: None
+train:
+  batch_size: 4
+  epochs: 1
+eval:
+  batch_size: 4
+model:
+  path: "t5-base"
+paths:
+  save_path: ""
+  data_path: r"C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\train_test_q_pa"
+
