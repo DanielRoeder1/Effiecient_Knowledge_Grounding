@@ -35,7 +35,7 @@ def train():
         bf16=False,
         torch_compile=False,
         gradient_accumulation_steps=args.train.grad_acc_steps,
-        logging_steps=args.training.log_steps
+        logging_steps=args.train.log_steps
     )
 
     trainer = Seq2SeqTrainer(
