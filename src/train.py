@@ -1,6 +1,6 @@
 from utils.utils import load_config
 from utils.training_utils import get_optimizer
-from Collator import DataCollatorForPromptedSeq2Seq
+from data_scripts.Collator import DataCollatorForPromptedSeq2Seq
 
 import os
 from datasets import load_from_disk
@@ -15,7 +15,7 @@ def train():
 
     dataset = load_from_disk(args.paths.data_path)
     if args.optim.total_steps is None: args.optim.total_steps = len(dataset["train"]) * args.train.batch_size * args.train.epochs
-    model = T5ForConditionalGeneration.from_pretrained(args.model.path)
+    model = T5ForConditionalGeneration.from_pretrained(args.model.path).to("cuda")
     tokenizer = AutoTokenizer.from_pretrained(args.model.path)
     collate_fn = DataCollatorForPromptedSeq2Seq(tokenizer, model, padding=True)
     optimizer_scheduler = get_optimizer(model, args)
@@ -30,8 +30,9 @@ def train():
         num_train_epochs=args.train.epochs,
         predict_with_generate=True,
         # torch 2.0
-        bf16=True,
-        torch_compile=True
+        bf16=False,
+        torch_compile=False,
+        gradient_accumulation_steps=args.train.gradient_accumulation_steps
     )
 
     trainer = Seq2SeqTrainer(

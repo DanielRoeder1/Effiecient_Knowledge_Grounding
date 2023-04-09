@@ -1,16 +1,17 @@
+paths:
+  save_path: "/content/sample_data"
+  data_path: "/content/drive/MyDrive/Master_Thesis/train_data/T5_training/train_test_q_pa"
 optim:
   lr: 1.0e-3
   weight_decay: 0.05
   warmup_steps: 1000
-  total_steps: None
+  total_steps: null
+  final_cosine: 1.0e-5
 train:
-  batch_size: 4
+  batch_size: 10
   epochs: 1
+  grad_acc: 5
 eval:
-  batch_size: 4
+  batch_size: 20
 model:
   path: "t5-base"
-paths:
-  save_path: ""
-  data_path: r"C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\train_test_q_pa"
-
