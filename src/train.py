@@ -17,6 +17,8 @@ def train():
     if args.optim.total_steps is None: args.optim.total_steps = len(dataset["train"]) * args.train.batch_size * args.train.epochs
     model = T5ForConditionalGeneration.from_pretrained(args.model.path).to("cuda")
     tokenizer = AutoTokenizer.from_pretrained(args.model.path)
+    tokenizer.add_special_tokens({'sep_token': args.model.sep_token})
+    model.resize_token_embeddings(len(tokenizer))
     collate_fn = DataCollatorForPromptedSeq2Seq(tokenizer, model, padding=True)
     optimizer_scheduler = get_optimizer(model, args)
 
@@ -32,7 +34,8 @@ def train():
         # torch 2.0
         bf16=False,
         torch_compile=False,
-        gradient_accumulation_steps=args.train.gradient_accumulation_steps
+        gradient_accumulation_steps=args.train.grad_acc_steps,
+        logging_steps=args.logging.log_steps
     )
 
     trainer = Seq2SeqTrainer(

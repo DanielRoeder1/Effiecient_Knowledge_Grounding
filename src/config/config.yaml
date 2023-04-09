@@ -8,10 +8,13 @@ optim:
   total_steps: null
   final_cosine: 1.0e-5
 train:
-  batch_size: 10
+  batch_size: 15
   epochs: 1
-  grad_acc: 5
+  grad_acc_steps: 4
+logging:
+  steps: 40
 eval:
   batch_size: 20
 model:
   path: "t5-base"
+  sep_token: "<sep>"
