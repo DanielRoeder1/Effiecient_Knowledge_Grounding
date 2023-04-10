@@ -7,12 +7,13 @@ optim:
   weight_decay: 0.05
   warmup_steps: 400
   total_steps: null
-  final_cosine: 3.0e-5
+  final_cosine: 4.0e-5
 train:
   batch_size: 15
   epochs: 1
   grad_acc_steps: 4
   log_steps: 40
+  save_steps: 400
 eval:
   batch_size: 20
 model:

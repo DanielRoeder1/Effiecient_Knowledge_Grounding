@@ -27,7 +27,8 @@ def train():
     train_args = Seq2SeqTrainingArguments(
         evaluation_strategy="no",
         output_dir= args.paths.save_path,
-        save_strategy="epoch",
+        save_strategy="steps",
+        save_steps=args.train.save_steps,
         per_device_train_batch_size=args.train.batch_size,
         per_device_eval_batch_size=args.eval.batch_size,
         save_total_limit=2,
