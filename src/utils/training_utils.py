@@ -1,5 +1,7 @@
 from torch.optim.lr_scheduler import SequentialLR,LinearLR,CosineAnnealingLR
 from torch.optim import AdamW
+from transformers import Adafactor
+import torch 
 
 
 # Adjusted code from: https://github.com/PiotrNawrot/nanoT5/blob/main/nanoT5/utils/model_utils.py
@@ -16,8 +18,13 @@ def get_optimizer(model, args):
             "weight_decay": 0.0,
         },
     ]
+    
+    assert args.optim.type in ["adam", "adafactor"], "Optimizer type not supported (adam, adafactor)"
+    if args.optim.type == "adam":
+        optimizer = AdamW(optimizer_grouped_parameters, lr=args.optim.lr,fused=True if torch.__version__ >= "2.0.0" else False)
+    elif args.optim.type == "adafactor":
+        optimizer = Adafactor(optimizer_grouped_parameters, lr=args.optim.lr, scale_parameter=False, relative_step=False)
 
-    optimizer = AdamW(optimizer_grouped_parameters, lr=args.optim.lr,fused=True)
 
     scheduler1 = LinearLR(
         optimizer,

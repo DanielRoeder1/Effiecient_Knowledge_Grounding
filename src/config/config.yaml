@@ -3,17 +3,18 @@ paths:
   data_path: "/content/drive/MyDrive/Master_Thesis/train_data/T5_training/train_test_q_pa"
   wandb_path: "/content/drive/MyDrive/Master_Thesis/ssh/wandb_key.txt"
 optim:
+  type: "adafactor"
   lr: 1.0e-3
   weight_decay: 0.05
   warmup_steps: 400
   total_steps: null
   final_cosine: 4.0e-5
 train:
-  batch_size: 15
-  epochs: 1
+  batch_size: 10
+  epochs: 3
   grad_acc_steps: 4
   log_steps: 40
-  save_steps: 400
+  save_steps: 500
 eval:
   batch_size: 20
 model:
