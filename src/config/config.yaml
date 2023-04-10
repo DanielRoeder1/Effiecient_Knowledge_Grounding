@@ -1,6 +1,7 @@
 paths:
   save_path: "/content/sample_data"
   data_path: "/content/drive/MyDrive/Master_Thesis/train_data/T5_training/train_test_q_pa"
+  wandb_path: "/content/drive/MyDrive/Master_Thesis/ssh/wandb_key.txt"
 optim:
   lr: 1.0e-3
   weight_decay: 0.05

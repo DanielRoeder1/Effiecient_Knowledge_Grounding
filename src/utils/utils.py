@@ -6,6 +6,11 @@ from types import SimpleNamespace
 def load_config(config_path):
     with open(config_path, 'r') as f:
         config = yaml.load(f, Loader=Loader)
+    
+    if config.paths.wandb is not None:
+            with open(config.paths.wandb, 'r') as f:
+                config.wandb_key = f.read()
+
     return config
 
 class Loader(yaml.Loader):
