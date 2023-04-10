@@ -7,9 +7,9 @@ def load_args():
     args = parse_args()
     dir_path = os.path.dirname(__file__)    
     if args.config_path == 'colab':
-        config_path = config_path = os.path.join(dir_path, "config/config_colab.yaml")
+        config_path = config_path = os.path.join(dir_path, "../config/config_colab.yaml")
     elif args.config_path == 'cluster':
-        config_path = config_path = os.path.join(dir_path, "config/config_cluster.yaml")
+        config_path = config_path = os.path.join(dir_path, "../config/config_cluster.yaml")
     config = load_config(config_path)
     if config.paths.wandb_path is not None:
             with open(config.paths.wandb_path, 'r') as f:
