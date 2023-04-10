@@ -52,6 +52,7 @@ def train():
     )
 
     trainer.train()
+    trainer.save_model(args.paths.save_path)
 
 
 
