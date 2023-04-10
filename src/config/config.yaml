@@ -5,9 +5,9 @@ paths:
 optim:
   lr: 1.0e-3
   weight_decay: 0.05
-  warmup_steps: 1000
+  warmup_steps: 400
   total_steps: null
-  final_cosine: 1.0e-5
+  final_cosine: 3.0e-5
 train:
   batch_size: 15
   epochs: 1

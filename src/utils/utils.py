@@ -7,8 +7,8 @@ def load_config(config_path):
     with open(config_path, 'r') as f:
         config = yaml.load(f, Loader=Loader)
     
-    if config.paths.wandb is not None:
-            with open(config.paths.wandb, 'r') as f:
+    if config.paths.wandb_path is not None:
+            with open(config.paths.wandb_path, 'r') as f:
                 config.wandb_key = f.read()
 
     return config
