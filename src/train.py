@@ -1,20 +1,16 @@
-from utils.utils import load_config
+from utils.utils import load_args
 from utils.training_utils import get_optimizer
 from data_scripts.Collator import DataCollatorForPromptedSeq2Seq
 
-import os
 from datasets import load_from_disk
 from transformers import Seq2SeqTrainingArguments, Seq2SeqTrainer
 from transformers import AutoTokenizer, T5ForConditionalGeneration
 import wandb
 
 def train():
-    dir_path = os.path.dirname(__file__)    
-    config_path = os.path.join(dir_path, "config/config.yaml")
-    args = load_config(config_path)
+    args = load_args()
     if hasattr(args, 'wandb_key'):
         wandb.login(key=args.wandb_key)
-
     dataset = load_from_disk(args.paths.data_path)
     if args.optim.total_steps is None: args.optim.total_steps = len(dataset["train"]) * args.train.batch_size * args.train.epochs
     model = T5ForConditionalGeneration.from_pretrained(args.model.path).to("cuda")
