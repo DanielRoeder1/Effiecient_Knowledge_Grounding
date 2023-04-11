@@ -12,7 +12,7 @@ def train():
     if hasattr(args, 'wandb_key'):
         wandb.login(key=args.wandb_key)
     dataset = load_from_disk(args.paths.data_path)
-    if args.optim.total_steps is None: args.optim.total_steps = len(dataset["train"]) * args.train.batch_size * args.train.epochs
+    if args.optim.total_steps is None: args.optim.total_steps = len(dataset["train"]) / args.train.grad_acc_steps * args.train.epochs
     model = T5ForConditionalGeneration.from_pretrained(args.model.path).to("cuda")
     tokenizer = AutoTokenizer.from_pretrained(args.model.path)
     tokenizer.add_special_tokens({'sep_token': args.model.sep_token})
