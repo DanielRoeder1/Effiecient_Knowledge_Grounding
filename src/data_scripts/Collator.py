@@ -47,29 +47,29 @@ class DataCollatorForPromptedSeq2Seq:
                     * self.pad_to_multiple_of
                 )
 
-            padding_side = self.tokenizer.padding_side
-            for feature in features:
-                if labels is not None: 
-                    label_remainder = [self.label_pad_token_id] * (max_label_length - len(feature["labels"]))
-                    if isinstance(feature["labels"], list):
-                        feature["labels"] = (
-                            feature["labels"] + label_remainder if padding_side == "right" else label_remainder + feature["labels"]
-                        )
-                    elif padding_side == "right":
-                        feature["labels"] = np.concatenate([feature["labels"], label_remainder]).astype(np.int64)
-                    else:
-                        feature["labels"] = np.concatenate([label_remainder, feature["labels"]]).astype(np.int64)
-                
-                if decoder_input_ids is not None:
-                    dec_input_remainder = [self.tokenizer.pad_token_id] * (max_dec_input_length - len(feature["decoder_input_ids"]))
-                    if isinstance(feature["decoder_input_ids"], list):
-                        feature["decoder_input_ids"] = (
-                            feature["decoder_input_ids"] + dec_input_remainder if padding_side == "right" else dec_input_remainder + feature["decoder_input_ids"]
-                        )
-                    elif padding_side == "right":
-                        feature["decoder_input_ids"] = np.concatenate([feature["decoder_input_ids"], dec_input_remainder]).astype(np.int64)
-                    else:
-                        feature["decoder_input_ids"] = np.concatenate([feature["decoder_input_ids"], dec_input_remainder]).astype(np.int64)
+        padding_side = self.tokenizer.padding_side
+        for feature in features:
+            if labels is not None: 
+                label_remainder = [self.label_pad_token_id] * (max_label_length - len(feature["labels"]))
+                if isinstance(feature["labels"], list):
+                    feature["labels"] = (
+                        feature["labels"] + label_remainder if padding_side == "right" else label_remainder + feature["labels"]
+                    )
+                elif padding_side == "right":
+                    feature["labels"] = np.concatenate([feature["labels"], label_remainder]).astype(np.int64)
+                else:
+                    feature["labels"] = np.concatenate([label_remainder, feature["labels"]]).astype(np.int64)
+            
+            if decoder_input_ids is not None:
+                dec_input_remainder = [self.tokenizer.pad_token_id] * (max_dec_input_length - len(feature["decoder_input_ids"]))
+                if isinstance(feature["decoder_input_ids"], list):
+                    feature["decoder_input_ids"] = (
+                        feature["decoder_input_ids"] + dec_input_remainder if padding_side == "right" else dec_input_remainder + feature["decoder_input_ids"]
+                    )
+                elif padding_side == "right":
+                    feature["decoder_input_ids"] = np.concatenate([feature["decoder_input_ids"], dec_input_remainder]).astype(np.int64)
+                else:
+                    feature["decoder_input_ids"] = np.concatenate([feature["decoder_input_ids"], dec_input_remainder]).astype(np.int64)
 
         features = self.tokenizer.pad(
             features,
