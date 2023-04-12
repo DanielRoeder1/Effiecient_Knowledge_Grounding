@@ -54,12 +54,14 @@ if __name__ == "__main__":
     tokenizer = AutoTokenizer.from_pretrained("t5-base")
     tokenizer.add_special_tokens({'sep_token': '<sep>'})
     
-    train_data = get_dataset(r'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\train_v2.1.json', tokenizer, mode="qp_a")
-    dev_data = get_dataset(r'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\dev_v2.1.json', tokenizer, mode="qp_a")
+    mode = "qp_a"
+
+    train_data = get_dataset(r'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\train_v2.1.json', tokenizer, mode=mode)
+    dev_data = get_dataset(r'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\dev_v2.1.json', tokenizer, mode=mode)
     # Because we potentially have multiple entries for each q,a pair (one for each passage) we split the dev set seperately to minmize leakage
     data_all = dev_data.train_test_split(test_size= 10_000, shuffle=False)
     data_all["train"] = concatenate_datasets([train_data, data_all["train"]])
 
-    data_all.save_to_disk(r'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\train_test_qp_a')
+    data_all.save_to_disk(rf'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\train_test_{mode}')
 
         
