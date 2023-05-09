@@ -21,3 +21,6 @@ model:
   path: "t5-base"
   sep_token: "<sep>"
   model_type: "T5ForConditionalGeneration"
+bulk_train:
+  use: True
+  
