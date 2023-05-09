@@ -25,6 +25,7 @@ def train():
     
     for save_path, path in zip(paths, save_paths):
         dataset = load_from_disk(path)
+        os.makedirs(save_path, exist_ok=True)
         if args.optim.total_steps is None: args.optim.total_steps = len(dataset["train"]) / args.train.grad_acc_steps * args.train.epochs
 
         model_class = getattr(models, args.model.model_type)
