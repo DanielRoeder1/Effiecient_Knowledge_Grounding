@@ -27,6 +27,7 @@ def train():
         model_types = [args.model.model_type]
     
     for path,save_path, model_type in zip(paths, save_paths,model_types):
+        print(f"### Training on {path} ###")
         dataset = load_from_disk(path)
         os.makedirs(save_path, exist_ok=True)
         if args.optim.total_steps is None: args.optim.total_steps = len(dataset["train"]) / args.train.grad_acc_steps * args.train.epochs
@@ -71,6 +72,7 @@ def train():
 
         trainer.train()
         trainer.save_model(save_path)
+        wandb.finish()
 
 
 
