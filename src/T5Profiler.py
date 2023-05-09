@@ -4,7 +4,12 @@ import torch
 class T5Profiler:
   # https://www.deepspeed.ai/tutorials/flops-profiler/#example-bert
   def __init__(self, model, tokenizer):
+    torch.cuda.empty_cache()
+    torch.cuda.reset_peak_memory_stats()
+    before_model = torch.cuda.max_memory_allocated()
     self.model = model.to("cuda")
+    after_model = torch.cuda.max_memory_allocated()
+    self.model_mem = after_model - before_model
     self.tokenizer = tokenizer
 
   def __call__(self, batch_size, encoder_seq_len, decoder_seq_len = 1,kv_seq_len = 0, verbose = False):
@@ -15,7 +20,8 @@ class T5Profiler:
         print_profile=verbose,
         detailed=False,
     )
-    return {"flops":flops,"macs":macs, "params":params}
+    forward_mem = self.get_memory_usage(input)
+    return {"flops":flops,"macs":macs, "params":params, "forward_mememory":forward_mem, "model_memory": self.model_mem}
 
   def t5_input_constructor(self,batch_size, encoder_seq_len, decoder_seq_len, kv_seq_len):
     enc_seq = ["".join([self.tokenizer.pad_token for i in range(encoder_seq_len)])] * batch_size
@@ -41,3 +47,12 @@ class T5Profiler:
 
     past_kv = tuple(num_layers * [tuple(num_kv* [torch.rand(batch_size, num_heads, kv_seq_len, head_dim).to("cuda")])])
     return past_kv
+
+  def get_memory_usage(self, inputs):
+    torch.cuda.empty_cache()
+    torch.cuda.reset_peak_memory_stats()
+    self.before_forward = torch.cuda.max_memory_allocated()
+    outs = self.model(**inputs)
+    self.after_forward = torch.cuda.max_memory_allocated()
+    return self.after_forward - self.before_forward
+
