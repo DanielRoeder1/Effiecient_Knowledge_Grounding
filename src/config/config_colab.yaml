@@ -1,6 +1,6 @@
 paths:
   save_path: "/content/sample_data"
-  data_path: "/content/drive/MyDrive/Master_Thesis/train_data/T5_training/train_test_q_pa"
+  data_path: "/content/drive/MyDrive/Master_Thesis/train_data/MSMacro"
   wandb_path: "/content/drive/MyDrive/Master_Thesis/ssh/wandb_key.txt"
 optim:
   type: "adafactor"

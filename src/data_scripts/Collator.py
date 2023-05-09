@@ -43,7 +43,7 @@ class DataCollatorForPromptedSeq2Seq:
         else:
             feature = np.concatenate([label_remainder, feature]).astype(np.int64)
         attn_mask = np.ones_like(feature)
-        attn_mask[-len(label_remainder) :] = 0
+        attn_mask[-len(label_remainder):] = 0
         return feature, attn_mask
 
     def __call__(self, features, return_tensors=None):
@@ -68,7 +68,7 @@ class DataCollatorForPromptedSeq2Seq:
         padding_side = self.tokenizer.padding_side
         for feature in features:
             if labels is not None: 
-                feature["labels"], _ = self.apply_padding(feature["labels"], max_label_length, padding_side)
+                feature["labels"], _ = self.apply_padding(feature["labels"], max_label_length, padding_side, is_label=True)
 
             if decoder_input_ids is not None:
                 feature["decoder_input_ids"], feature["decoder_attention_mask"] = self.apply_padding(feature["decoder_input_ids"], max_dec_input_length, padding_side)
@@ -96,6 +96,7 @@ class DataCollatorForPromptedSeq2Seq:
         elif (decoder_input_ids is not None
              and self.model is not None
         ):
+            # Shifts ids to the right and ads decoder start token
             input_ids = features["decoder_input_ids"]
             shifted_input_ids = input_ids.new_zeros(input_ids.shape)
             shifted_input_ids[..., 1:] = input_ids[..., :-1].clone()

@@ -15,7 +15,7 @@ def train():
     if hasattr(args, 'wandb_key'):
         wandb.login(key=args.wandb_key)
     # Create benchmarks by training on multiple datasets sequentially
-    if args.bulk_train:
+    if args.bulk_train.use:
         cl_model_name = args.model.path.replace("/","_")
         paths = glob(os.path.join(args.paths.data_path, f"*{cl_model_name}*"))
         save_paths = [os.path.join(args.paths.save_path, f"{p[mode_idx:]}_{cl_model_name}" )for p in paths if (mode_idx:=p.rfind("q"))]
@@ -23,7 +23,7 @@ def train():
         model_types = [mode_to_modeltype[p[mode_idx:]] for p in paths if (mode_idx:=p.rfind("q"))]
     else:
         paths = [args.path.data_path]
-        save_paths = [args.paths.save_path]
+        save_paths = [args.path.paths.save_path]
         model_types = [args.model.model_type]
     
     for path,save_path, model_type in zip(paths, save_paths,model_types):
