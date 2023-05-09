@@ -4,8 +4,10 @@ from data_scripts.Collator import DataCollatorForPromptedSeq2Seq
 
 from datasets import load_from_disk
 from transformers import Seq2SeqTrainingArguments, Seq2SeqTrainer
-from transformers import AutoTokenizer, T5ForConditionalGeneration
+from transformers import AutoTokenizer
 import wandb
+
+import models
 
 def train():
     args = load_args()
@@ -13,7 +15,10 @@ def train():
         wandb.login(key=args.wandb_key)
     dataset = load_from_disk(args.paths.data_path)
     if args.optim.total_steps is None: args.optim.total_steps = len(dataset["train"]) / args.train.grad_acc_steps * args.train.epochs
-    model = T5ForConditionalGeneration.from_pretrained(args.model.path).to("cuda")
+
+    model_class = getattr(models, args.model.model_type)
+    model = model_class.from_pretrained(args.model.path).to("cuda")
+
     tokenizer = AutoTokenizer.from_pretrained(args.model.path)
     tokenizer.add_special_tokens({'sep_token': args.model.sep_token})
     model.resize_token_embeddings(len(tokenizer))
@@ -27,7 +32,7 @@ def train():
         save_steps=args.train.save_steps,
         per_device_train_batch_size=args.train.batch_size,
         per_device_eval_batch_size=args.eval.batch_size,
-        save_total_limit=2,
+        save_total_limit=3,
         num_train_epochs=args.train.epochs,
         predict_with_generate=True,
         # torch 2.0
