@@ -22,8 +22,8 @@ def train():
         mode_to_modeltype = {"q_p_a": "T5Concat", "q_a": "T5ForConditionalGeneration", "q_pa": "T5ForConditionalGeneration", "qp_a": "T5ForConditionalGeneration"}
         model_types = [mode_to_modeltype[p[mode_idx:]] for p in paths if (mode_idx:=p.rfind("q"))]
     else:
-        paths = [args.path.data_path]
-        save_paths = [args.path.paths.save_path]
+        paths = [args.paths.data_path]
+        save_paths = [args.paths.save_path]
         model_types = [args.model.model_type]
     
     for path,save_path, model_type in zip(paths, save_paths,model_types):
