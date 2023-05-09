@@ -21,9 +21,11 @@ def process_dataset(data_path, tokenizer, mode):
 
 if __name__ == "__main__":
     data_path = r"C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\gpt_generated\gpt_dolly.csv"
-    tokenizer = AutoTokenizer.from_pretrained("google/t5-v1_1-base")
+    model_name = "t5-base"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.add_special_tokens({'sep_token': '<sep>'})
-    mode = "q_pa"
-    df = process_dataset(data_path, tokenizer, mode=mode)
-    df.save_to_disk(rf"C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\gpt_generated\train_data_{len(df)}_{mode}")
-    print(df)
+    for mode in ["q_a", "qp_a", "q_pa","q_p_a"]:
+        df = process_dataset(data_path, tokenizer, mode=mode)
+        df = df.train_test_split(test_size=1_000, shuffle=True)
+        df.save_to_disk(rf"C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\gpt_generated\train_data_{model_name.replace('/','_')}_{mode}")
+        print(df)

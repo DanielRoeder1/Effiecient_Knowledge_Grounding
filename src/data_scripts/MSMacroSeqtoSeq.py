@@ -3,7 +3,7 @@ from datasets import Dataset
 from tqdm import tqdm
 
 def get_dataset(data_path, tokenizer, mode="q_a"):
-    assert mode in ["q_a", "qp_a", "q_pa"], "select one of the following modes: q_a, qp_a, q_pa"
+    assert mode in ["q_a", "qp_a", "q_pa","q_p_a"], "select one of the following modes: q_a, qp_a, q_pa"
     if mode in ["q_pa", "qp_a"]:
         assert tokenizer.sep_token_id is not None, "tokenizer must have a sep_token_id for mode q_pa or qp_a"
     with open(data_path) as f:
@@ -50,18 +50,21 @@ def tokenize_function(inputs, tokenizer):
 if __name__ == "__main__":
     from transformers import AutoTokenizer
     from datasets import concatenate_datasets
-
-    tokenizer = AutoTokenizer.from_pretrained("t5-base")
+    model_name = "t5-base"
+    model_name = "google/t5-v1_1-base"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.add_special_tokens({'sep_token': '<sep>'})
     
-    mode = "qp_a"
+    for mode in ["q_a", "qp_a", "q_pa","q_p_a"]:
+        train_data = get_dataset(r'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\MSMacro\train_v2.1.json', tokenizer, mode=mode)
+        dev_data = get_dataset(r'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\MSMacro\dev_v2.1.json', tokenizer, mode=mode)
+        # Because we potentially have multiple entries for each q,a pair (one for each passage) we split the dev set seperately to minmize leakage
+        #data_all = dev_data
+        #data_all["train"] = concatenate_datasets([train_data, data_all["train"]])
+        data_all = concatenate_datasets([train_data, dev_data])
+        data_all = data_all.train_test_split(test_size= 10_000, train_size= 30_000, shuffle=False)
 
-    train_data = get_dataset(r'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\train_v2.1.json', tokenizer, mode=mode)
-    dev_data = get_dataset(r'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\dev_v2.1.json', tokenizer, mode=mode)
-    # Because we potentially have multiple entries for each q,a pair (one for each passage) we split the dev set seperately to minmize leakage
-    data_all = dev_data.train_test_split(test_size= 10_000, shuffle=False)
-    data_all["train"] = concatenate_datasets([train_data, data_all["train"]])
-
-    data_all.save_to_disk(rf'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\train_test_{mode}')
+        data_all.save_to_disk(rf'C:\Users\Daniel\Documents\Effiecient_Knowledge_Grounding\data\MSMacro\train_test__{model_name.replace("/","_")}_{mode}')
+        print(data_all)
 
         
