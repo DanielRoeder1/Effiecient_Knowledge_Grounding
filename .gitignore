@@ -5,3 +5,4 @@ src/utils/__pycache__
 src/config/config_cluster.yaml
 src/data_scripts/__pycache__
 *.pkl
+key.txt

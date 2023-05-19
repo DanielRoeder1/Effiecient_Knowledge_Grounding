@@ -6,6 +6,7 @@ from typing import Optional, Tuple, Union
 import torch
 from torch.nn import CrossEntropyLoss
 from transformers.modeling_outputs  import Seq2SeqLMOutput
+from torch import nn
 
 
 
@@ -151,3 +152,28 @@ class T5Concat(T5ForConditionalGeneration):
             encoder_hidden_states= None,
             encoder_attentions=None,
         )
+    
+
+
+class MLP_KnowledgeAddon(nn.Module):
+    ### This replaces the DenseReluDense layer in the T5LayerFF
+    def __init__(self, config, DenseReluDense):
+        super().__init__()
+        self.dense_act_dense = DenseReluDense
+
+        self.know_k_fc = nn.Linear(config.know_mlp.input_dim, config.know_mlp_output_dim)
+        self.know_v_fc = nn.Linear(config.know_mlp.input_dim, config.know_mlp_output_dim)
+    
+    def forward(self, hidden_states, knowledge_emebds):
+        x = self.dense_act_dense(hidden_states)
+
+        k = self.know_k_fc(knowledge_emebds)
+        v = self.know_v_fc(knowledge_emebds)
+
+        know = torch.matmul(hidden_states.transpose(0,1), k.transose(1,2))
+        know = self.dense_act_dense.act(know)
+        know = self.dense_act_dense.dropout(know)
+        know = torch.matmul(know, v)
+
+        return x + know.transpose(0,1)
+
